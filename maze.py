@@ -5,14 +5,12 @@ system("cls")
 
 POS_X = 0
 POS_Y = 0
-MAP_WIDTH = 20
-MAP_HEIGH = 20
 NUM_OF_MAP_OBJECTS = 11
 
 obstacle_definition = """\
-############################
+   ######################   
                         ####
-######################  ####
+###                     ####
 ######################  ####
 ###########                 
 ###################  #######
@@ -36,14 +34,15 @@ direction = " "
 map_objects = []
 
 obstacle_definition = [list(row) for row in obstacle_definition.split("\n")]
-print(obstacle_definition)
+MAP_WIDTH = len(obstacle_definition[0])
+MAP_HEIGH = len(obstacle_definition)
 
 while len(map_objects) < NUM_OF_MAP_OBJECTS:
     new_position = [random.randint(0,MAP_WIDTH-1),random.randint(0,MAP_HEIGH-1)]
     if new_position not in map_objects and new_position != my_position:
         map_objects.append(new_position)
 
-def mapping(tail,tail_length,direction):
+def mapping(tail,tail_length,direction,my_position):
     system("cls")
     print("+"+ "-" * MAP_WIDTH * 3 + "+")
     for coordinate_y in range(MAP_HEIGH):
@@ -74,13 +73,15 @@ def mapping(tail,tail_length,direction):
                     tail_length += 1
                 if tail_in_cell:
                     tail_length = -1
+            if obstacle_definition[coordinate_y][coordinate_x] == "#":
+                char_to_draw = "#"
             print(" {} ".format(char_to_draw), end = "")
         print("|")
     print("+"+ "-" * MAP_WIDTH * 3 + "+")
     return(tail_length)
 
 while True:
-    tail_length=mapping(tail,tail_length,direction)
+    tail_length=mapping(tail,tail_length,direction,my_position)
     if tail_length == -1:
         system("cls")
         print("You dead!")
@@ -91,27 +92,21 @@ while True:
         break
     # Ask user where he wants to move
     direction = readchar.readchar().decode()
+    new_position = None
     if direction == "w":
-        tail.insert(0, my_position.copy())
-        tail = tail[:tail_length]
-        my_position[1] -= 1
-        my_position[1] %= MAP_HEIGH
+        new_position = [my_position[0], (my_position[1] - 1) % MAP_WIDTH]
     elif direction == "s":
-        tail.insert(0, my_position.copy())
-        tail = tail[:tail_length]
-        my_position[1] += 1
-        my_position[1] %= MAP_HEIGH
+        new_position = [my_position[0], (my_position[1] + 1) % MAP_WIDTH]
     elif direction == "a":
-        tail.insert(0, my_position.copy())
-        tail = tail[:tail_length]
-        my_position[0] -= 1
-        my_position[0] %= MAP_WIDTH
+        new_position = [(my_position[0]-1) % MAP_WIDTH, my_position[1]]
     elif direction == "d":
-        tail.insert(0, my_position.copy())
-        tail = tail[:tail_length]
-        my_position[0] += 1
-        my_position[0] %= MAP_WIDTH
+        new_position = [(my_position[0]+1) % MAP_WIDTH, my_position[1]]
     elif direction == "p":
         system("cls")
         print("Thanks for playing!\n\n\n")
         break
+    if new_position:
+        if obstacle_definition[new_position[1]][new_position[0]] != "#":
+            tail.insert(0, my_position.copy())
+            tail = tail[:tail_length]
+            my_position = new_position
