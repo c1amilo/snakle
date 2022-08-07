@@ -8,20 +8,20 @@ POS_Y = 0
 NUM_OF_MAP_OBJECTS = 11
 
 obstacle_definition = """\
-   ######################   
+   #########################
                         ####
 ###                     ####
 ######################  ####
-###########                 
-###################  #######
-###############            #
+######################  ####    
+###################    #####
+###############        #####
 ########          ##########
-###############             
+###############        #####
 #####################  #####
-###############          ###
-#########        ######     
-#########  ############   ##
-#########  ################ 
+###############        #####
+#########        ###########
+#########  #################
+#########  #################
 ############################\
 """
 
@@ -39,7 +39,8 @@ MAP_HEIGH = len(obstacle_definition)
 
 while len(map_objects) < NUM_OF_MAP_OBJECTS:
     new_position = [random.randint(0,MAP_WIDTH-1),random.randint(0,MAP_HEIGH-1)]
-    if new_position not in map_objects and new_position != my_position:
+    if new_position not in map_objects and new_position != my_position and \
+            obstacle_definition[new_position[1]][new_position[0]] != "#":
         map_objects.append(new_position)
 
 def mapping(tail,tail_length,direction,my_position):
